@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+  <div class="quiz-container">
+    <header>
+      <h1>🔥 Quiz Game</h1>
+      <div class="score-timer">
+        <span id="score">Score: 0</span>
+        <span id="timer">10s</span>
+        <button id="mode-toggle">🌙</button>
+      </div>
+    </header>
+
+    <section id="quiz">
+      <h2 id="question">Loading...</h2>
+      <div id="options" class="options">
+        <!-- Options inserted via JS -->
+      </div>
+      <button id="next-btn">Next</button>
+    </section>
+
+    <section id="result" class="hidden">
+      <h2>Your Score: <span id="final-score"></span></h2>
+      <button id="retry-btn">Retry</button> 
+      <div id="leaderboard">
+        <h3>🌍 Global Leaderboard</h3>
+        <ul id="leaderboard-list"></ul>
+      </div>
+    </section>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script src="firebase.js"></script>
+</body>
+</html>
