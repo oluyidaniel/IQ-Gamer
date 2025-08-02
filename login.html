@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Quiz Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light-mode">
+  <div class="login-container">
+    <h2>🎮 Welcome to Quiz Game</h2>
+    <form id="login-form">
+      <input type="text" id="name" placeholder="Enter your name" required />
+      <input type="email" id="email" placeholder="Enter your email" required />
+      <button type="submit">Start Game</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("login-form");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+
+      if (name && email) {
+        localStorage.setItem("quizPlayerName", name);
+        localStorage.setItem("quizPlayerEmail", email);
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
