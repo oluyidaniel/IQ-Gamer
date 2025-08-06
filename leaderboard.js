@@ -1,28 +1,39 @@
-const fullLeaderboardList = document.getElementById("full-leaderboard-list");
-
-function loadFullLeaderboard() {
-  fullLeaderboardList.innerHTML = "<li>Loading...</li>";
-
-  database.ref("leaderboard")
-    .orderByChild("score")
-    .once("value", snapshot => {
-      const data = [];
-      snapshot.forEach(child => data.push(child.val()));
-      data.reverse(); // High scores first
-
-      if (data.length === 0) {
-        fullLeaderboardList.innerHTML = "<li>No entries yet.</li>";
-        return;
-      }
-
-      fullLeaderboardList.innerHTML = data.map((player, i) => `
-        <li>
-          <strong>#${i + 1}</strong> 
-          ${player.name} — ${player.score} 
-          <small>${player.email ? `(${player.email})` : ""}</small>
-        </li>
-      `).join("");
-    });
+function toggleTheme() {
+  document.body.classList.toggle("dark-mode");
 }
 
-window.onload = loadFullLeaderboard;
+const leaderboardBody = document.querySelector("#leaderboard tbody");
+
+function updateLeaderboard(snapshot) {
+  const users = snapshot.val();
+  const playerList = [];
+
+  for (const id in users) {
+    const player = users[id];
+    if (player.name) {
+      playerList.push({
+        name: player.name,
+        gameID: id, // userID
+        score: player.score || 0
+      });
+    }
+  }
+
+  playerList.sort((a, b) => b.score - a.score);
+
+  leaderboardBody.innerHTML = "";
+
+  playerList.forEach((player, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${player.name}</td>
+      <td>${player.gameID}</td>
+      <td>${player.score}</td>
+    `;
+    leaderboardBody.appendChild(row);
+  });
+}
+
+const usersRef = database.ref("users");
+usersRef.on("value", updateLeaderboard);

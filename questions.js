@@ -1,13 +1,17 @@
 const questions = [
   {
-    question: "What is the capital of Nigeria?",
-    options: ["Lagos", "Abuja", "Kano", "Ibadan"],
-    answer: "Abuja"
+    question: "What is the capital of France?",
+    options: ["Berlin", "Madrid", "Paris", "Rome"],
+    answer: 2
   },
   {
-    question: "2 + 5 equals?",
-    options: ["5", "6", "7", "8"],
-    answer: "7"
+    question: "What is 2 + 2?",
+    options: ["3", "4", "5", "6"],
+    answer: 1
+  },
+  {
+    question: "Who wrote 'Macbeth'?",
+    options: ["Shakespeare", "Tolstoy", "Homer", "Dante"],
+    answer: 0
   }
-  // Add more questions
 ];

@@ -3,23 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Leaderboard | Quiz Game</title>
+  <title>Leaderboard</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="light-mode">
-  <header>
-    <h1>🌍 Global Leaderboard</h1>
-    <a href="index.html">← Back to Game</a>
-  </header>
+<body>
+  <button onclick="toggleTheme()">Toggle Dark/Light</button>
+  <h2>🏆 Global Leaderboard</h2>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <main>
-    <ul id="full-leaderboard-list"></ul>
-  </main>
-
-  <!-- Firebase scripts -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script src="firebase.js"></script>
+
+  <!-- Leaderboard Logic -->
   <script src="leaderboard.js"></script>
 </body>
 </html>

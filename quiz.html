@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Game</title>
+  <link rel="stylesheet" href="./Css/style.css" />
+</head>
+<body>
+
+  <div id="quiz">
+    <button onclick="toggleTheme()">Toggle Dark/Light</button>
+
+    <div class="question-box">
+      <h3 id="question">Loading question...</h3>
+      <div id="options"></div>
+    </div>
+
+    <div id="timer">Time Left: <span id="time">15</span>s</div>
+    <div class="score">Score: <span id="score">0</span></div>
+
+    <button id="next-btn" disabled>Next</button>
+    <button id="retry-btn" class="hidden">Retry</button>
+    <button id="leaderboard-btn" class="hidden">View Leaderboard</button>
+  </div>
+
+  <!-- Sound effects -->
+  <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
+  <audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <!-- Firebase setup -->
+  <script src="firebase.js"></script>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="quiz.js"></script>
+
+</body>
+</html>

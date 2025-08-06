@@ -2,33 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | Quiz Game</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Game | Auth</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .hidden { display: none; }
+    input, button { display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem; }
+    .toggle { text-align: center; margin-top: 1rem; cursor: pointer; color: blue; }
+  </style>
 </head>
-<body class="light-mode">
-  <div class="login-container">
-    <h2>🎮 Welcome to Quiz Game</h2>
-    <form id="login-form">
-      <input type="text" id="name" placeholder="Enter your name" required />
-      <input type="email" id="email" placeholder="Enter your email" required />
-      <button type="submit">Start Game</button>
-    </form>
-  </div>
+<body>
+  <h2 id="form-title">Register</h2>
+
+  <!-- Register Form -->
+  <form id="register-form">
+    <input type="text" id="reg-name" placeholder="Your Name" required />
+    <input type="email" id="reg-email" placeholder="Your Email" required />
+    <button type="submit">Register</button>
+  </form>
+
+  <!-- Login Form -->
+  <form id="login-form" class="hidden">
+    <input type="email" id="login-email" placeholder="Enter Your Email" required />
+    <button type="submit">Login</button>
+  </form>
+
+  <div class="toggle" id="toggle-link">Already have an account? Login here</div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="firebase.js"></script>
 
   <script>
-    const form = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+    const loginForm = document.getElementById("login-form");
+    const toggleLink = document.getElementById("toggle-link");
+    const formTitle = document.getElementById("form-title");
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-
-      if (name && email) {
-        localStorage.setItem("quizPlayerName", name);
-        localStorage.setItem("quizPlayerEmail", email);
-        window.location.href = "index.html";
+    // Toggle between forms
+    toggleLink.addEventListener("click", () => {
+      if (registerForm.classList.contains("hidden")) {
+        showRegisterForm();
+      } else {
+        showLoginForm();
       }
+    });
+
+    function showLoginForm() {
+      registerForm.classList.add("hidden");
+      loginForm.classList.remove("hidden");
+      formTitle.innerText = "Login";
+      toggleLink.innerText = "Don't have an account? Register here";
+    }
+
+    function showRegisterForm() {
+      registerForm.classList.remove("hidden");
+      loginForm.classList.add("hidden");
+      formTitle.innerText = "Register";
+      toggleLink.innerText = "Already have an account? Login here";
+    }
+
+    // Register
+    registerForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+
+      database.ref("users").orderByChild("email").equalTo(email).once("value", snapshot => {
+        if (snapshot.exists()) {
+          alert("Email already registered. Please login.");
+          showLoginForm();
+        } else {
+          const newUserRef = database.ref("users").push();
+          newUserRef.set({
+            name,
+            email,
+            score: 0,
+            timestamp: Date.now()
+          }).then(() => {
+            alert("Registration successful. Please login now.");
+            showLoginForm();
+          });
+        }
+      });
+    });
+
+    // Login
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value.trim();
+
+      database.ref("users").orderByChild("email").equalTo(email).once("value").then(snapshot => {
+        if (snapshot.exists()) {
+          const userObj = snapshot.val();
+          const userID = Object.keys(userObj)[0];
+          const user = userObj[userID];
+
+          localStorage.setItem("quizPlayerName", user.name);
+          localStorage.setItem("quizPlayerEmail", user.email);
+          localStorage.setItem("quizPlayerID", userID);
+
+          window.location.href = "quiz.html";
+        } else {
+          alert("No account found with this email.");
+        }
+      });
     });
   </script>
 </body>
