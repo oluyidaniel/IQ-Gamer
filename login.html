@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="./Frontend/Css/style.css">
   <title>Quiz Game | Auth</title>
   <style>
     body {
@@ -17,6 +18,12 @@
   </style>
 </head>
 <body>
+  <!-- Loading Animation -->
+  <div id="loader" class="loader">
+    <div class="circle-loader"></div>
+    <h1 id="loaderText" class="fade-text hidden">IQ GAME</h1>
+  </div>
+
   <h2 id="form-title">Register</h2>
 
   <!-- Register Form -->
@@ -34,10 +41,23 @@
 
   <div class="toggle" id="toggle-link">Already have an account? Login here</div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script src="firebase.js"></script>
+  <script>
+    window.addEventListener("load", () => {
+      const loaderText = document.getElementById("loaderText");
+      
+      // Show "IQ GAME" text after 1.5s
+      setTimeout(() => {
+        loaderText.classList.remove("hidden");
+        loaderText.classList.add("show");
+      }, 1500);
+
+      // Hide loader and show login after 3s
+      setTimeout(() => {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("login-section").classList.remove("hidden");
+      }, 3000);
+    });
+  </script>
 
   <script>
     const registerForm = document.getElementById("register-form");

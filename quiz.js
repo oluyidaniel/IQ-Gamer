@@ -1,7 +1,6 @@
-// quiz.js
-
 let currentQuestion = 0;
 let score = 0;
+let questions = [];
 let timer;
 let timeLeft = 15;
 
@@ -25,9 +24,29 @@ if (!name || !email || !userID) {
   window.location.href = "auth.html";
 }
 
-// Toggle theme function (if you use it)
 function toggleTheme() {
   document.body.classList.toggle("dark-mode");
+}
+
+async function fetchQuestions(topic = "general", difficulty = "easy") {
+  try {
+    const response = await fetch("http://localhost:5000/generate-quiz", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic, difficulty }),
+    });
+
+    const data = await response.json();
+    if (data.success && Array.isArray(data.questions)) {
+      return data.questions;
+    } else {
+      throw new Error("Invalid questions format");
+    }
+  } catch (err) {
+    console.error("Failed to fetch questions:", err);
+    alert("Unable to load quiz questions. Try again later.");
+    return [];
+  }
 }
 
 function startTimer() {
@@ -48,7 +67,7 @@ function startTimer() {
 function loadQuestion() {
   clearInterval(timer);
 
-  if(currentQuestion >= questions.length){
+  if (currentQuestion >= questions.length) {
     finishQuiz();
     return;
   }
@@ -92,14 +111,12 @@ function selectOption(selectedDiv, selectedIndex) {
     allOptions[correctIndex].classList.add("correct");
   }
 
-  nextBtn.disabled = false;
+  setTimeout(loadNextQuestion, 2500);
 }
 
 function disableOptions() {
   const allOptions = document.querySelectorAll(".option");
-  allOptions.forEach(opt => {
-    opt.onclick = null;
-  });
+  allOptions.forEach(opt => opt.onclick = null);
 }
 
 function showCorrectAnswer() {
@@ -160,5 +177,12 @@ nextBtn.addEventListener("click", loadNextQuestion);
 retryBtn.addEventListener("click", restartQuiz);
 leaderboardBtn.addEventListener("click", goToLeaderboard);
 
-// Initialize quiz
-loadQuestion();
+// Start quiz by fetching questions first
+async function initQuiz() {
+  questions = await fetchQuestions(); // default: general, easy
+  if (questions.length > 0) {
+    loadQuestion();
+  }
+}
+
+initQuiz();

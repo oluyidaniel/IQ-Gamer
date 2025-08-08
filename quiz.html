@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Quiz Game</title>
-  <link rel="stylesheet" href="./Css/style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -28,16 +28,29 @@
   <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
   <audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+ 
 
-  <!-- Firebase setup -->
-  <script src="firebase.js"></script>
+
 
   <!-- Scripts -->
   <script src="questions.js"></script>
   <script src="quiz.js"></script>
+<!-- frontend/quiz.html -->
+<script>
+async function fetchQuiz() {
+  const res = await fetch("http://localhost:5000/api/generate-quiz", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      topic: "JavaScript",
+      difficulty: "beginner"
+    })
+  });
+
+  const data = await res.json();
+  console.log("Quiz:", data.quiz); // You can now render the questions
+}
+</script>
 
 </body>
 </html>
