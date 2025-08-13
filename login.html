@@ -28,14 +28,19 @@
 
   <!-- Register Form -->
   <form id="register-form">
-    <input type="text" id="reg-name" placeholder="Your Name" required />
+    <input type="text" id="reg-user" placeholder="User Name" required />
+    <input type="text" id="reg-name" placeholder="Full Name" required />
     <input type="email" id="reg-email" placeholder="Your Email" required />
+    <input type="password" id="reg-password" placeholder="Password" required />
+    <input type="password" id="reg-con-password" placeholder="Confirm Password" required />
+
     <button type="submit">Register</button>
   </form>
 
   <!-- Login Form -->
   <form id="login-form" class="hidden">
-    <input type="email" id="login-email" placeholder="Enter Your Email" required />
+    <input type="text" id="reg-user" placeholder="User Name" required />
+    <input type="password" id="reg-password" placeholder="password" required />
     <button type="submit">Login</button>
   </form>
 
@@ -92,7 +97,10 @@
     registerForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const name = document.getElementById("reg-name").value.trim();
-      const email = document.getElementById("reg-email").value.trim();
+      const userName = document.getElementById("reg-user").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password= document.getElementById("reg-password").value.trim();
+      const confirmPassword = document.getElementById("reg-con-password").value.trim();
 
       database.ref("users").orderByChild("email").equalTo(email).once("value", snapshot => {
         if (snapshot.exists()) {
