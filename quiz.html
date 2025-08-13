@@ -1,73 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz Game</title>
-  <link rel="stylesheet" href="./Frontend/Css/quiz.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IQ Game — Quiz</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Uses your deep black + pink theme */
+    :root{
+      --bg:#0f0f0f; --card:rgba(255,255,255,.05); --text:#f0f0f0;
+      --pink:#ff2e9a; --pink-soft:#ff84c4; --green:#00ff9f; --red:#ff4c4c;
+    }
+    body{margin:0;font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:1000px;margin:0 auto;padding:24px;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .pill{background:var(--card);padding:10px 14px;border-radius:999px;box-shadow:0 0 12px rgba(255,46,154,.25)}
+    .pill strong{color:var(--pink)}
+    .card{background:var(--card);border-radius:20px;padding:20px;backdrop-filter:blur(10px);
+      box-shadow:0 0 20px rgba(255,46,154,.25);}
+    .qtext{font-size:1.25rem;line-height:1.5;margin-bottom:16px;color:#fff}
+    .grid{display:grid;gap:12px}
+    .opts{grid-template-columns:1fr 1fr}
+    .btn{
+      background:#1a1a1a;border:1px solid transparent;color:#fff;padding:14px;border-radius:14px;cursor:pointer;
+      transition:.2s; text-align:left;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:0 0 12px rgba(255,46,154,.35)}
+    .btn.primary{background:var(--pink);text-align:center}
+    .btn.correct{background:var(--green);color:#000}
+    .btn.wrong{background:var(--red)}
+    .feedback{min-height:28px;margin-top:10px;font-weight:600}
+    .feedback.ok{color:var(--green)} .feedback.bad{color:var(--red)}
+    .row{display:flex;gap:16px;align-items:flex-start}
+    .col{flex:1}
+    .side{width:320px;position:sticky;top:16px}
+    .muted{opacity:.8}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#1a1a1a;color:#ddd;font-size:.85rem;margin-right:8px}
+    .title{color:var(--pink);margin:0 0 12px}
+    .hr{height:1px;background:#1f1f1f;margin:16px 0}
+    .buddy{display:flex;flex-direction:column;gap:10px}
+    .chatbox{background:#121212;border:1px solid #222;border-radius:12px;padding:12px;height:220px;overflow:auto}
+    .chat-msg{margin:6px 0}
+    .chat-user{color:var(--pink)}
+    .chat-ai{color:#c9ffd8}
+    .chat-controls{display:flex;gap:8px}
+    .chat-controls input{flex:1;padding:10px;border-radius:10px;border:1px solid #333;background:#111;color:#fff}
+    .chat-controls button{padding:10px 14px;border:none;border-radius:10px;background:var(--pink);color:#fff;cursor:pointer}
+    .hidden{display:none}
+    .tiny{font-size:.85rem}
+    .quiz-img{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:14px}
+  </style>
 </head>
-
 <body>
-  <section>
-    <div class="top-bar">
-      <div>
-        <span>Iq Game</span>
-      </div>
+  <div class="wrap">
+    <!-- Top status bar -->
+    <div class="topbar">
+      <div class="pill"><strong>Player:</strong> <span id="playerName">Guest</span></div>
+      <div class="pill"><strong>Score:</strong> <span id="score">0</span></div>
+      <div class="pill"><strong>Rank:</strong> <span id="rank">—</span></div>
+      <div class="pill"><strong>Time:</strong> <span id="timer">00:10</span></div>
+    </div>
 
-      <div>
-        <div id="timer">Time Left: <span id="time">15</span>s</div>
-        <div class="score">Score: <span id="score">0</span></div>
-      </div>
-      <div>
-        <div class="leaderboard">
-          <p>rank 10</p>
+    <div class="row">
+      <!-- Main quiz column -->
+      <div class="col">
+        <div class="card">
+          <div class="badge" id="topicBadge">Topic: Mixed</div>
+          <div class="hr"></div>
+
+          <div id="questionText" class="qtext">Loading question…</div>
+
+          <!-- Random image for interaction -->
+          <img id="quizImage" class="quiz-img" src="" alt="Quiz visual" />
+
+          <div id="options" class="grid opts">
+            <!-- Options injected here -->
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <!-- Removed Next & Skip from UI (skip handled in JS) -->
+            <button id="endBtn" class="btn">End Quiz</button>
+          </div>
         </div>
       </div>
+
+      <!-- AI + Insights sidebar -->
+      <aside class="side">
+        <div class="card" style="margin-bottom:16px">
+          <h3 class="title">AI Insights</h3>
+          <div id="insights" class="tiny muted">Waiting for your first answer…</div>
+        </div>
+
+        <div class="card buddy">
+          <h3 class="title">Quiz Buddy 🤖</h3>
+          <div id="chat" class="chatbox"></div>
+          <div class="chat-controls">
+            <input id="chatInput" placeholder="Ask for a hint or explanation…"/>
+            <button id="chatSend">Send</button>
+          </div>
+          <div class="tiny muted">The buddy gives hints, not answers.</div>
+        </div>
+      </aside>
     </div>
+  </div>
 
+  <!-- Sounds -->
+  <audio id="sndCorrect" src="assets/sounds/correct.mp3" preload="auto"></audio>
+  <audio id="sndWrong" src="assets/sounds/wrong.mp3" preload="auto"></audio>
 
-    <div class="quiz-container">
-      <div>
-
-        <div class=""></div>
-        <button id="next-btn" disabled>Next</button>
-        <button id="retry-btn" class="hidden">Retry</button>
-        <button id="leaderboard-btn" class="hidden">View Leaderboard</button>
-      </div>
-      <div>
-        <img src="" alt="">
-      </div>
-    </div>
-
-    <!-- Sound effects -->
-    <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
-    <audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
-  </section>
-
-
-
-
-  <!-- Scripts -->
-  <!-- <script src="questions.js"></script>
-  <script src="quiz.js"></script> -->
-  <!-- frontend/quiz.html -->
-  <script>
-    async function fetchQuiz() {
-      const res = await fetch("http://localhost:5000/api/generate-quiz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          topic: "JavaScript",
-          difficulty: "beginner"
-        })
-      });
-
-      const data = await res.json();
-      console.log("Quiz:", data.quiz); // You can now render the questions
-    }
-  </script>
-
+  <script src="quiz.js"></script>
 </body>
-
 </html>

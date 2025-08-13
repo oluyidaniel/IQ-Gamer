@@ -1,39 +1,28 @@
-function toggleTheme() {
-  document.body.classList.toggle("dark-mode");
-}
+document.addEventListener("DOMContentLoaded", () => {
+  fetchLeaderboard();
+});
 
-const leaderboardBody = document.querySelector("#leaderboard tbody");
+function fetchLeaderboard() {
+  fetch("http://localhost:5000/api/leaderboard") // Backend endpoint
+    .then(res => res.json())
+    .then(data => {
+      const tableBody = document.querySelector("#leaderboardTable tbody");
+      tableBody.innerHTML = "";
 
-function updateLeaderboard(snapshot) {
-  const users = snapshot.val();
-  const playerList = [];
+      data.forEach((player, index) => {
+        const row = document.createElement("tr");
 
-  for (const id in users) {
-    const player = users[id];
-    if (player.name) {
-      playerList.push({
-        name: player.name,
-        gameID: id, // userID
-        score: player.score || 0
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${player.name}</td>
+          <td>${player.email}</td>
+          <td>${player.score}</td>
+        `;
+
+        tableBody.appendChild(row);
       });
-    }
-  }
-
-  playerList.sort((a, b) => b.score - a.score);
-
-  leaderboardBody.innerHTML = "";
-
-  playerList.forEach((player, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${player.name}</td>
-      <td>${player.gameID}</td>
-      <td>${player.score}</td>
-    `;
-    leaderboardBody.appendChild(row);
-  });
+    })
+    .catch(err => {
+      console.error("Error fetching leaderboard:", err);
+    });
 }
-
-const usersRef = database.ref("users");
-usersRef.on("value", updateLeaderboard);
